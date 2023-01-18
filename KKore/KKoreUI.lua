@@ -979,8 +979,7 @@ function KUI:CreateDialogFrame(cfg, kparent)
   frame:SetBackdropColor(0, 0, 0, 1)
 
   if (frame:IsResizable()) then
-    frame:SetMinResize(cfg.minwidth or width, cfg.minheight or height)
-    frame:SetMaxResize(cfg.maxwidth or width, cfg.maxheight or height)
+    frame:SetResizeBounds(cfg.minwidth or width, cfg.minheight or height, cfg.maxwidth or width, cfg.maxheight or height)
   end
 
   if (cfg.xbutton) then
@@ -2200,8 +2199,7 @@ function KUI:CreateTabbedDialog(cfg, kparent)
 
   local seframe, swframe, soframe = make_resizeable(frame, 25, cfg.canresize)
   if (seframe) then
-    frame:SetMinResize(cfg.minwidth or 192, cfg.minheight or 192)
-    frame:SetMaxResize(cfg.maxwidth or 1024, cfg.maxheight or 1024)
+    frame:SetResizeBounds(cfg.minwidth or 192, cfg.minheight or 192, cfg.maxwidth or 1024, cfg.maxheight or 1024)
 
     -- This "draws" the little chevron at the bottom right corner that the user
     -- can drag to resize.
@@ -2264,7 +2262,7 @@ function KUI:CreateTabbedDialog(cfg, kparent)
     thistab.subtab = 1
 
     -- Full frame for this page
-    local pf = MakeFrame("Frame", fname .. "Page" .. k, frame) 
+    local pf = MakeFrame("Frame", fname .. "Page" .. k, frame)
     pf:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
     pf:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     pf.tabnum = k
@@ -2969,7 +2967,7 @@ function KUI.HighlightItemHelper(objp, idx, slot, btn, onoff, onfn, offfn)
     end
     return
   else
-    btn:SetNormalTexture(nil)
+    btn:ClearNormalTexture()
     if (offfn) then
       return offfn(objp, idx, slot, btn, false)
     end
@@ -3773,7 +3771,7 @@ local function dd_refresh_frame(fr, tlfr, ilist, nilist)
     --
     if (not tbf.frame) then
       if ((not tbf.enabled) or (not tbf.clickable)) then
-        tbf:SetHighlightTexture(nil)
+        tbf:ClearHighlightTexture()
       else
         tbf:SetHighlightTexture("Interface/QuestFrame/UI-QuestTitleHighlight", "ADD")
       end
@@ -3836,9 +3834,7 @@ local function dd_refresh_frame(fr, tlfr, ilist, nilist)
   fr:SetHeight(wheight)
   fr.widest = widest
   fr.extrawidth = xtra
-
-  fr:SetMinResize(fr.minwidth or wwidth, fr.minheight or wheight)
-  fr:SetMaxResize(fr.maxwidth or maxwidth, fr.maxheight or maxheight)
+  fr:SetResizeBounds(fr.minwidth or wwidth, fr.minheight or wheight, fr.maxwidth or maxwidth, fr.maxheight or maxheight)
 
   --
   -- Now we need to loop through all of the item frames one last time and
@@ -3932,8 +3928,7 @@ local function dd_refresh_frame(fr, tlfr, ilist, nilist)
   -- Check to see if the window is currently larger than the min/maximum. This
   -- can happen when items are refreshed and the maximum size changes.
   --
-  local mxwidth, mxheight = fr:GetMaxResize()
-  local mnwidth, mnheight = fr:GetMinResize()
+  local mnwidth, mnheight, mxwidth, mxheight = fr:GetResizeBounds()
   local cw, ch = fr:GetWidth(), fr:GetHeight()
   local sbx, sby = fr.scrollbar:GetMinMaxValues()
   if (cw < mnwidth) then
@@ -4757,11 +4752,9 @@ local function ksl_updatelist(this, nlist)
   local ga = this.headerspace + this.footerspace + (2 * this.borderoffset)
   local mh = ((x + 1) * this.itemheight) + ga
   local h = min(mh, this.uheight)
-  local mnw, _ = this:GetMinResize()
-  local mxw, _ = this:GetMaxResize()
+  local mnw, _mnh, mxw, _mxh = fr:GetResizeBounds()
   this.height = h
-  this:SetMinResize(mnw, (2 * this.itemheight) + ga + 48)
-  this:SetMaxResize(mxw, mh)
+  this:SetResizeBounds(mnw, (2 * this.itemheight) + ga + 48, mxw, mh)
   this:SetHeight(h)
   this.slist.itemcount = x
   this.slist:UpdateList()
