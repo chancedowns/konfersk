@@ -4752,7 +4752,7 @@ local function ksl_updatelist(this, nlist)
   local ga = this.headerspace + this.footerspace + (2 * this.borderoffset)
   local mh = ((x + 1) * this.itemheight) + ga
   local h = min(mh, this.uheight)
-  local mnw, _mnh, mxw, _mxh = fr:GetResizeBounds()
+  local mnw, _mnh, mxw, _mxh = this:GetResizeBounds()
   this.height = h
   this:SetResizeBounds(mnw, (2 * this.itemheight) + ga + 48, mxw, mh)
   this:SetHeight(h)
